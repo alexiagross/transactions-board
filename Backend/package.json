@@ -1,0 +1,18 @@
+{
+    "name": "express-server",
+    "version": "0.0.1",
+    "license": "",
+    "scripts": {
+        "start:mac": "tsc && cp transactions.json dist/transactions.json && node dist/server.js",
+        "start:windows": "tsc && copy transactions.json dist\\transactions.json && node dist\\server.js"
+    },
+    "dependencies": {
+        "body-parser": "1.20.1",
+        "cors": "^2.8.5",
+        "express": "4.18.2"
+    },
+    "devDependencies": {
+        "@types/node": "18.11.9",
+        "typescript": "4.8.4"
+    }
+}
