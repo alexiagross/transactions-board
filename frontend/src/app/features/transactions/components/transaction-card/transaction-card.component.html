@@ -1,0 +1,26 @@
+<div class="transaction-card" (click)="navigateToDetail()">
+  <div class="transaction-header">
+    <div class="transaction-info">
+      <h3 class="other-party">{{ transaction.otherParty.name }}</h3>
+      <p class="description">{{ transaction.description }}</p>
+    </div>
+    <div
+      class="transaction-amount"
+      [class.positive]="transaction.amount > 0"
+      [class.negative]="transaction.amount < 0"
+    >
+      {{
+        transactionService.formatAmount(
+          transaction.amount,
+          transaction.currencyCode
+        )
+      }}
+    </div>
+  </div>
+  <div class="transaction-footer">
+    <span class="time">{{
+      transactionService.formatTime(transaction.timestamp)
+    }}</span>
+    <span class="iban">{{ transaction.otherParty.iban }}</span>
+  </div>
+</div>
