@@ -8,9 +8,9 @@ export interface Transaction {
   timestamp: string;
   amount: number;
   currencyCode: string;
-  currencyRate: number;
+  currencyRate?: number;
   description: string;
-  otherParty: OtherParty;
+  otherParty?: OtherParty;
 }
 
 export interface TransactionDay {
@@ -20,4 +20,26 @@ export interface TransactionDay {
 
 export interface TransactionData {
   days: TransactionDay[];
+}
+
+export enum TransactionCategory {
+  INCOME = 'income',
+  FOOD_DINING = 'food_dining',
+  SHOPPING = 'shopping',
+  TRANSPORTATION = 'transportation',
+  CASH_ATM = 'cash_atm',
+  TRANSFER = 'transfer',
+  BILLS_UTILITIES = 'bills_utilities',
+  ENTERTAINMENT = 'entertainment',
+  HEALTHCARE = 'healthcare',
+  EDUCATION = 'education',
+  OTHER = 'other',
+}
+
+export interface TransactionCategoryInfo {
+  category: TransactionCategory;
+  name: string;
+  icon: string;
+  color: string;
+  backgroundColor: string;
 }

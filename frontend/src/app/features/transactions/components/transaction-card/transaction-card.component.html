@@ -1,26 +1,27 @@
-<div class="transaction-card" (click)="navigateToDetail()">
-  <div class="transaction-header">
-    <div class="transaction-info">
-      <h3 class="other-party">{{ transaction.otherParty.name }}</h3>
-      <p class="description">{{ transaction.description }}</p>
+<mat-card class="transaction-card" (click)="navigateToDetail()">
+  <mat-card-content>
+    <div class="transaction-content">
+      <div
+        class="transaction-icon"
+        [class.positive]="eurAmount > 0"
+        [class.negative]="eurAmount < 0"
+      >
+        <mat-icon>{{
+          eurAmount > 0 ? "arrow_upward" : "arrow_downward"
+        }}</mat-icon>
+      </div>
+
+      <div class="transaction-info">
+        <h3 class="party-name">{{ displayName }}</h3>
+      </div>
+
+      <div
+        class="transaction-amount"
+        [class.positive]="eurAmount > 0"
+        [class.negative]="eurAmount < 0"
+      >
+        {{ transactionService.formatAmount(eurAmount, "EUR") }}
+      </div>
     </div>
-    <div
-      class="transaction-amount"
-      [class.positive]="transaction.amount > 0"
-      [class.negative]="transaction.amount < 0"
-    >
-      {{
-        transactionService.formatAmount(
-          transaction.amount,
-          transaction.currencyCode
-        )
-      }}
-    </div>
-  </div>
-  <div class="transaction-footer">
-    <span class="time">{{
-      transactionService.formatTime(transaction.timestamp)
-    }}</span>
-    <span class="iban">{{ transaction.otherParty.iban }}</span>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

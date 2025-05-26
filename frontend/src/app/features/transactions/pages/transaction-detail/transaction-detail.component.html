@@ -1,106 +1,211 @@
 <div class="transaction-detail-container">
   <div class="header">
-    <button class="back-button" (click)="goBack()">
-      ← Back to Transactions
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
     </button>
+    <h1>Transaction Details</h1>
   </div>
 
-  <div class="loading" *ngIf="loading">
-    <p>Loading transaction details...</p>
+  <div class="loading-section" *ngIf="loading">
+    <mat-card class="loading-card">
+      <mat-card-content>
+        <div class="loading-content">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading transaction details...</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
-  <div class="error" *ngIf="error">
-    <p>{{ error }}</p>
-    <button (click)="loadTransaction()" class="retry-button">Retry</button>
+  <div class="error-section" *ngIf="error">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon color="warn">error</mat-icon>
+          <p>{{ error }}</p>
+          <button mat-raised-button color="primary" (click)="loadTransaction()">
+            <mat-icon>refresh</mat-icon>
+            Retry
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <div
     class="transaction-detail-card"
     *ngIf="transaction$ | async as transaction"
   >
-    <div class="card-header">
-      <h2>Transaction Details</h2>
-      <div
-        class="amount"
-        [class.positive]="transaction.amount > 0"
-        [class.negative]="transaction.amount < 0"
-      >
-        {{
-          transactionService.formatAmount(
-            transaction.amount,
-            transaction.currencyCode
-          )
-        }}
-      </div>
-    </div>
-
-    <div class="card-content">
-      <div class="detail-section">
-        <h3>Transaction Information</h3>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <label>Transaction ID</label>
-            <span>{{ transaction.id }}</span>
-          </div>
-          <div class="detail-item">
-            <label>Date & Time</label>
-            <span
-              >{{ transactionService.formatDate(transaction.timestamp) }} at
-              {{ transactionService.formatTime(transaction.timestamp) }}</span
+    <mat-card class="main-card">
+      <mat-card-header class="card-header">
+        <div class="header-content">
+          <div class="category-section">
+            <div
+              class="category-icon"
+              [style.background-color]="
+                getCategoryInfo(transaction).backgroundColor
+              "
+              [style.color]="getCategoryInfo(transaction).color"
             >
+              <mat-icon>{{ getCategoryInfo(transaction).icon }}</mat-icon>
+            </div>
+            <mat-chip
+              class="category-chip"
+              [style.background-color]="getCategoryInfo(transaction).color"
+              [style.color]="'white'"
+            >
+              {{ getCategoryInfo(transaction).name }}
+            </mat-chip>
           </div>
-          <div class="detail-item">
-            <label>Description</label>
-            <span>{{ transaction.description }}</span>
+          <div class="header-info">
+            <mat-card-title *ngIf="transaction.otherParty">{{
+              transaction.otherParty.name
+            }}</mat-card-title>
+            <mat-card-title *ngIf="!transaction.otherParty">{{
+              transaction.description
+            }}</mat-card-title>
+            <mat-card-subtitle *ngIf="transaction.otherParty">{{
+              transaction.description
+            }}</mat-card-subtitle>
           </div>
-          <div class="detail-item">
-            <label>Currency</label>
-            <span>{{ transaction.currencyCode }}</span>
-          </div>
-          <div class="detail-item">
-            <label>Exchange Rate</label>
-            <span>{{ transaction.currencyRate | number : "1.6-6" }}</span>
+          <div class="amount-section">
+            <div
+              class="main-amount"
+              [class.positive]="getEurAmount(transaction) > 0"
+              [class.negative]="getEurAmount(transaction) < 0"
+            >
+              {{
+                transactionService.formatAmount(
+                  getEurAmount(transaction),
+                  "EUR"
+                )
+              }}
+            </div>
+            <mat-chip
+              *ngIf="transaction.currencyCode !== 'EUR'"
+              class="original-amount"
+            >
+              {{
+                transactionService.formatAmount(
+                  transaction.amount,
+                  transaction.currencyCode
+                )
+              }}
+            </mat-chip>
           </div>
         </div>
-      </div>
+      </mat-card-header>
 
-      <div class="detail-section">
-        <h3>Other Party</h3>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <label>Name</label>
-            <span>{{ transaction.otherParty.name }}</span>
-          </div>
-          <div class="detail-item">
-            <label>IBAN</label>
-            <span class="iban">{{ transaction.otherParty.iban }}</span>
+      <mat-card-content class="card-content">
+        <div class="detail-section">
+          <h3>
+            <mat-icon>info</mat-icon>
+            Transaction Information
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Transaction ID</label>
+              <span>{{ transaction.id }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Category</label>
+              <div class="category-display">
+                <div
+                  class="category-icon-small"
+                  [style.background-color]="
+                    getCategoryInfo(transaction).backgroundColor
+                  "
+                  [style.color]="getCategoryInfo(transaction).color"
+                >
+                  <mat-icon>{{ getCategoryInfo(transaction).icon }}</mat-icon>
+                </div>
+                <span>{{ getCategoryInfo(transaction).name }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <label>Date & Time</label>
+              <span
+                >{{ transactionService.formatDate(transaction.timestamp) }} at
+                {{ transactionService.formatTime(transaction.timestamp) }}</span
+              >
+            </div>
+            <div class="detail-item">
+              <label>Description</label>
+              <span>{{ transaction.description }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Original Currency</label>
+              <span>{{ transaction.currencyCode }}</span>
+            </div>
+            <div class="detail-item" *ngIf="transaction.currencyCode !== 'EUR'">
+              <label>Exchange Rate</label>
+              <span>{{ transaction.currencyRate | number : "1.6-6" }}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="detail-section" *ngIf="transaction.currencyCode !== 'EUR'">
-        <h3>Amount Conversion</h3>
-        <div class="conversion-info">
-          <p>
-            Original:
-            {{
-              transactionService.formatAmount(
-                transaction.amount,
-                transaction.currencyCode
-              )
-            }}
-          </p>
-          <p>
-            EUR Equivalent:
-            {{
-              transactionService.formatAmount(
-                transaction.amount / transaction.currencyRate,
-                "EUR"
-              )
-            }}
-          </p>
+        <mat-divider></mat-divider>
+
+        <div class="detail-section" *ngIf="transaction.otherParty">
+          <h3>
+            <mat-icon>person</mat-icon>
+            Other Party
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Name</label>
+              <span>{{ transaction.otherParty.name }}</span>
+            </div>
+            <div class="detail-item">
+              <label>IBAN</label>
+              <span class="iban">{{ transaction.otherParty.iban }}</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+
+        <mat-divider *ngIf="transaction.otherParty"></mat-divider>
+
+        <div class="detail-section" *ngIf="transaction.currencyCode !== 'EUR'">
+          <h3>
+            <mat-icon>currency_exchange</mat-icon>
+            Currency Conversion
+          </h3>
+          <div class="conversion-info">
+            <mat-card class="conversion-card">
+              <mat-card-content>
+                <div class="conversion-row">
+                  <span class="label">Original Amount:</span>
+                  <span class="value">{{
+                    transactionService.formatAmount(
+                      transaction.amount,
+                      transaction.currencyCode
+                    )
+                  }}</span>
+                </div>
+                <div class="conversion-row">
+                  <span class="label">Exchange Rate:</span>
+                  <span class="value"
+                    >1 {{ transaction.currencyCode }} =
+                    {{
+                      1 / transaction.currencyRate | number : "1.4-4"
+                    }}
+                    EUR</span
+                  >
+                </div>
+                <div class="conversion-row total">
+                  <span class="label">EUR Equivalent:</span>
+                  <span class="value">{{
+                    transactionService.formatAmount(
+                      getEurAmount(transaction),
+                      "EUR"
+                    )
+                  }}</span>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
