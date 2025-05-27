@@ -1,0 +1,307 @@
+.transaction-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .back-button {
+    color: #000061;
+  }
+
+  h1 {
+    margin: 0;
+    color: #000061;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+}
+
+.loading-section,
+.error-section {
+  margin: 2rem 0;
+
+  .loading-card,
+  .error-card {
+    text-align: center;
+    border-radius: 12px;
+  }
+
+  .loading-content,
+  .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+
+    mat-icon {
+      font-size: 3rem;
+      width: 3rem;
+      height: 3rem;
+      color: #666;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 1.125rem;
+    }
+  }
+
+  .error-content mat-icon {
+    color: #f44336;
+  }
+}
+
+.main-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .card-header {
+    background: linear-gradient(135deg, #000061 0%, #1a1a7a 100%);
+    color: white;
+    padding: 2rem;
+
+    .header-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+
+      .category-icon {
+        border-radius: 50%;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 2rem;
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+
+      .category-chip {
+        font-size: 0.75rem !important;
+        height: 24px !important;
+        border-radius: 12px !important;
+        padding: 0 8px !important;
+        font-weight: 500 !important;
+
+        .mdc-evolution-chip__text-label {
+          color: white !important;
+        }
+      }
+    }
+
+    .header-info {
+      flex: 1;
+
+      mat-card-title {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      mat-card-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+      }
+    }
+
+    .amount-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+
+      .main-amount {
+        font-size: 2rem;
+        font-weight: 700;
+
+        &.positive {
+          color: #4caf50;
+        }
+
+        &.negative {
+          color: #f44336;
+        }
+      }
+
+      .original-amount {
+        background-color: #fe8000;
+        color: white;
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .card-content {
+    padding: 2rem;
+  }
+}
+
+.detail-section {
+  margin-bottom: 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #000061;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #fe8000;
+    }
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  span {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+
+    &.iban {
+      font-family: "Courier New", monospace;
+      background: #f5f5f5;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      font-size: 0.875rem;
+    }
+  }
+
+  .category-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .category-icon-small {
+      border-radius: 50%;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+.conversion-info {
+  .conversion-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+
+    .conversion-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      &.total {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #000061;
+        border-top: 2px solid #fe8000;
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+      }
+
+      .label {
+        color: #666;
+      }
+
+      .value {
+        font-weight: 500;
+        color: #333;
+      }
+    }
+  }
+}
+
+mat-divider {
+  margin: 2rem 0;
+  border-color: #fe8000;
+}
+
+@media (max-width: 768px) {
+  .transaction-detail-container {
+    padding: 0.5rem;
+  }
+
+  .main-card .card-header .header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+
+    .amount-section {
+      align-items: center;
+    }
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .conversion-info .conversion-card .conversion-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}

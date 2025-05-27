@@ -1,0 +1,27 @@
+<mat-card class="transaction-card" (click)="navigateToDetail()">
+  <mat-card-content>
+    <div class="transaction-content">
+      <div
+        class="transaction-icon"
+        [class.positive]="eurAmount > 0"
+        [class.negative]="eurAmount < 0"
+      >
+        <mat-icon>{{
+          eurAmount > 0 ? "arrow_upward" : "arrow_downward"
+        }}</mat-icon>
+      </div>
+
+      <div class="transaction-info">
+        <h3 class="party-name">{{ displayName }}</h3>
+      </div>
+
+      <div
+        class="transaction-amount"
+        [class.positive]="eurAmount > 0"
+        [class.negative]="eurAmount < 0"
+      >
+        {{ transactionService.formatAmount(eurAmount, "EUR") }}
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

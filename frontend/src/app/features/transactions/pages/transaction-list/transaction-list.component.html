@@ -1,0 +1,219 @@
+<div class="transaction-list-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>account_balance_wallet</mat-icon>
+      Transaction History
+    </h1>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-header">
+          <h3>
+            <mat-icon>filter_list</mat-icon>
+            Filters
+          </h3>
+          <button
+            mat-button
+            color="accent"
+            (click)="clearAllFilters()"
+            *ngIf="hasActiveFilters"
+          >
+            <mat-icon>clear</mat-icon>
+            Clear All
+          </button>
+        </div>
+
+        <div class="filters-content">
+          <!-- Category Filter -->
+          <div class="filter-group">
+            <h4>Categories</h4>
+            <div class="category-chips">
+              <mat-chip
+                [class.selected]="selectedCategoryValue === 'all'"
+                (click)="onCategoryChange('all')"
+              >
+                <mat-icon>all_inclusive</mat-icon>
+                All
+              </mat-chip>
+              <mat-chip
+                *ngFor="let category of categories"
+                [class.selected]="selectedCategoryValue === category.category"
+                [style.background-color]="
+                  selectedCategoryValue === category.category
+                    ? category.color
+                    : ''
+                "
+                [style.color]="
+                  selectedCategoryValue === category.category
+                    ? 'white'
+                    : category.color
+                "
+                (click)="onCategoryChange(category.category)"
+              >
+                <mat-icon>{{ category.icon }}</mat-icon>
+                {{ category.name }}
+              </mat-chip>
+            </div>
+          </div>
+
+          <!-- Date Filter -->
+          <div class="filter-group">
+            <h4>Date Selection</h4>
+            <div class="date-filter">
+              <mat-calendar
+                [selected]="getSelectedDate()"
+                [dateFilter]="dateFilter"
+                [dateClass]="dateClass"
+                (selectedChange)="onDateSelected($event)"
+              >
+              </mat-calendar>
+              <button
+                mat-button
+                color="accent"
+                (click)="clearDateFilter()"
+                *ngIf="selectedDateValue"
+              >
+                <mat-icon>clear</mat-icon>
+                Clear Date Filter
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Active Filters Display -->
+  <div class="active-filters" *ngIf="hasActiveFilters">
+    <mat-card class="active-filters-card">
+      <mat-card-content>
+        <div class="active-filters-content">
+          <span class="filters-label">Active filters:</span>
+          <div class="active-filter-chips">
+            <mat-chip
+              *ngIf="selectedCategoryValue !== 'all'"
+              [style.background-color]="
+                getCategoryInfo(selectedCategoryValue).color
+              "
+              [style.color]="'white'"
+            >
+              <mat-icon>{{
+                getCategoryInfo(selectedCategoryValue).icon
+              }}</mat-icon>
+              {{ getCategoryInfo(selectedCategoryValue).name }}
+              <mat-icon (click)="clearCategoryFilter()">close</mat-icon>
+            </mat-chip>
+            <mat-chip *ngIf="selectedDateValue" class="date-chip">
+              <mat-icon>calendar_today</mat-icon>
+              {{ transactionService.formatDateLocal(selectedDateValue) }}
+              <mat-icon (click)="clearDateFilter()">close</mat-icon>
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="loading-section" *ngIf="loading">
+    <mat-card class="loading-card">
+      <mat-card-content>
+        <div class="loading-content">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading transactions...</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="error-section" *ngIf="error">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon color="warn">error</mat-icon>
+          <p>{{ error }}</p>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="loadTransactions()"
+          >
+            <mat-icon>refresh</mat-icon>
+            Retry
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="transaction-timeline" *ngIf="filteredData$ | async as data">
+    <div class="day-group" *ngFor="let day of data.days" [id]="'day-' + day.id">
+      <div class="day-header">
+        <mat-card class="day-header-card">
+          <mat-card-content>
+            <div class="day-header-content">
+              <div class="day-info">
+                <mat-icon>calendar_today</mat-icon>
+                <div class="date-info">
+                  <h2>{{ transactionService.formatDateLocal(day.id) }}</h2>
+                  <span
+                    class="day-total"
+                    [class.positive]="getDayTotal(day) > 0"
+                    [class.negative]="getDayTotal(day) < 0"
+                  >
+                    {{
+                      transactionService.formatAmount(getDayTotal(day), "EUR")
+                    }}
+                  </span>
+                </div>
+              </div>
+              <mat-chip class="transaction-count-chip">
+                {{ day.transactions.length }}
+              </mat-chip>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="day-transactions">
+        <app-transaction-card
+          *ngFor="
+            let transaction of day.transactions;
+            trackBy: trackByTransactionId
+          "
+          [transaction]="transaction"
+        >
+        </app-transaction-card>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="empty-state"
+    *ngIf="(filteredData$ | async)?.days.length === 0 && !loading"
+  >
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <div class="empty-content">
+          <mat-icon>filter_list_off</mat-icon>
+          <h3>No transactions found</h3>
+          <p *ngIf="hasActiveFilters">
+            No transactions match the selected filters.
+          </p>
+          <p *ngIf="!hasActiveFilters">
+            There are no transactions to display at the moment.
+          </p>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="clearAllFilters()"
+            *ngIf="hasActiveFilters"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
